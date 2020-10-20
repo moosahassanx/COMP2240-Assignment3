@@ -9,6 +9,7 @@ class mysimulator {
         int numFrames = 0;
         int quantumSize = 0;
         ArrayList<Process> pList = new ArrayList<Process>();
+        int processId = 1;
 
         // getting data from user
         for(int i = 0; i < args.length; i++)
@@ -30,6 +31,7 @@ class mysimulator {
             {
                 // fetching data from file
                 Scanner file = new Scanner(new File(args[i]));
+                String fileName = args[i];
 
                 try
                 {
@@ -54,20 +56,42 @@ class mysimulator {
                     }
 
                     // create object with data and add to list
-                    Process process = new Process(pages);
+                    Process process = new Process(processId, fileName, pages);
                     pList.add(process);
+                    processId++;
                 }
                 catch(Exception e)
                 {
                     System.out.println("ERROR: " + e);
                 }
+
+                file.close();
             }
         }
 
-        for (Process p : pList)     // TODO: TESTING PURPOSES
+        // creating algorithms
+        RoundRobin RR = new RoundRobin();
+
+        // running algorithms
+        RR.setList(pList);
+
+
+        // TODO: FAKE OUTPUT
+        System.out.println("LRU - Fixed:");
+        System.out.println("PID  Process Name      Turnaround Time  # Faults  Fault Times  ");
+        for (Process process : pList) 
         {
-            System.out.println(p.getPageArray());
+            process.printData();
         }
+        System.out.println();
+        System.out.println("------------------------------------------------------------");
+        System.out.println();
+        System.out.println("Clock - Fixed:");
+        System.out.println("PID  Process Name      Turnaround Time  # Faults  Fault Times  ");
+        System.out.println("1    Process1.txt      38               5         {0, 7, 16, 23, 30}");
+        System.out.println("2    Process2.txt      39               5         {0, 8, 17, 24, 31}");
+        System.out.println("3    Process3.txt      18               1         {0}");
+        System.out.println("4    Process4.txt      37               4         {0, 12, 19, 28}");
 
     }
 }
