@@ -3,7 +3,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-class mysimulator {
+class mysimulator 
+{
     public static void main(String args[]) throws FileNotFoundException
     {
         int numFrames = 0;
@@ -72,6 +73,14 @@ class mysimulator {
         // creating algorithms
         RoundRobin RR = new RoundRobin();
 
+        // allocated frames for each process
+        int dividedFrames = numFrames / pList.size();
+        for (Process p : pList) 
+        {
+            p.setFrames(dividedFrames);
+        }
+
+
         // running algorithms
         RR.setList(pList);
 
@@ -79,7 +88,7 @@ class mysimulator {
         // TODO: FAKE OUTPUT
         System.out.println("LRU - Fixed:");
         System.out.println("PID  Process Name      Turnaround Time  # Faults  Fault Times  ");
-        for (Process process : pList) 
+        for (Process process : pList)
         {
             process.printData();
         }

@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "CodeLens (Launch) - mysimulator",
+            "request": "launch",
+            "mainClass": "mysimulator",
+            "projectName": "COMP2240-Assignment3_56a75558"
+        },
+        {
             "name": "Java",
             "type": "java",
             "request": "launch",
@@ -16,7 +23,14 @@
                 ".",
                 "${fileDirname}"
             ],
-            "args": ["30", "3", "Process1.txt", "Process2.txt", "Process3.txt", "Process4.txt"]
+            "args": [
+                "30",
+                "3",
+                "Process1.txt",
+                "Process2.txt",
+                "Process3.txt",
+                "Process4.txt"
+            ]
         },
         {
             "name": "Java Console App",

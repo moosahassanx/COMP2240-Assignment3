@@ -8,6 +8,7 @@ public class Process {
     private int turnAround;
     private int numFaults;
     ArrayList<Integer> fList;
+    private int frames;
 
     // constructor
     public Process(int i,String f , ArrayList<Integer> p)
@@ -18,6 +19,7 @@ public class Process {
         this.turnAround = 0;
         this.numFaults = 0;
         this.fList = new ArrayList<Integer>();
+        this.frames = 0;
     }
     
     // acessors
@@ -29,6 +31,11 @@ public class Process {
     public int getNumFaults()
     {
         return this.numFaults;
+    }
+
+    public int getFrames()
+    {
+        return this.frames;
     }
 
     public String generateFaultList()
@@ -59,6 +66,11 @@ public class Process {
     public void setNumFaults(int n)
     {
         this.numFaults = n;
+    }
+
+    public void setFrames(int f)
+    {
+        this.frames = f;
     }
 
     // methods
