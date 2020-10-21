@@ -71,7 +71,7 @@ class mysimulator
         }
 
         // creating algorithms
-        RoundRobin RR = new RoundRobin();
+        LeastRecentlyUsed LRU = new LeastRecentlyUsed();
 
         // allocated frames for each process
         int dividedFrames = numFrames / pList.size();
@@ -80,18 +80,18 @@ class mysimulator
             p.setFrames(dividedFrames);
         }
 
+        LRU.setList(pList);
+        
 
         // running algorithms
-        RR.setList(pList);
+        LRU.RoundRobin();
 
 
         // TODO: FAKE OUTPUT
         System.out.println("LRU - Fixed:");
         System.out.println("PID  Process Name      Turnaround Time  # Faults  Fault Times  ");
-        for (Process process : pList)
-        {
-            process.printData();
-        }
+        LRU.outputResults();
+
         System.out.println();
         System.out.println("------------------------------------------------------------");
         System.out.println();

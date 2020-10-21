@@ -9,6 +9,8 @@ public class Process {
     private int numFaults;
     ArrayList<Integer> fList;
     private int frames;
+    private boolean blocked;
+    private int timeToUnblock;
 
     // constructor
     public Process(int i,String f , ArrayList<Integer> p)
@@ -20,9 +22,16 @@ public class Process {
         this.numFaults = 0;
         this.fList = new ArrayList<Integer>();
         this.frames = 0;
+        this.blocked = false;
+        this.timeToUnblock = 0;
     }
     
     // acessors
+    public String getFileName()
+    {
+        return this.fileName;
+    }
+    
     public int getTurnAround()
     {
         return this.turnAround;
@@ -73,11 +82,39 @@ public class Process {
         this.frames = f;
     }
 
+    public void setBlocked(int cpuWatch)
+    {
+        boolean blocked = true;
+        timeToUnblock = cpuWatch + 6;
+    }
+
+    public void setReady()
+    {
+        boolean blocked = false;
+    }
+
     // methods
+    public boolean canUnblock(int cpuWatch)
+    {
+        if(cpuWatch == this.timeToUnblock)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public void printData()
     {
         String strTurnaround = String.format("%7d", this.turnAround);
         String strFListSize = String.format("%17d", this.fList.size());
         System.out.println(this.ID + "    " + this.fileName + strTurnaround + strFListSize + "\t\t" + generateFaultList());
+    }
+
+    public void printer()
+    {
+        System.out.println(this.fileName + " " + this.frames);
     }
 }
