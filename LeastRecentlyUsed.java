@@ -5,18 +5,15 @@ import java.util.Queue;
 
 public class LeastRecentlyUsed
 {
-    // attributes
     private ArrayList<Process> LRUList;
-    private int blockingTime;
-    private Queue<Process> readyQueue;                // ready queue
-    private ArrayDeque<Process> bQueue;            // blocked queue
-    private ArrayList<Process> resultingList;         // final list to print
-    
+    private Queue<Process> readyQueue; // ready queue
+    private ArrayDeque<Process> bQueue; // blocked queue
+    private ArrayList<Process> resultingList; // final list to print
+
     // constructor
-    public LeastRecentlyUsed()
-    {
+    public LeastRecentlyUsed() {
+        new ArrayList<Integer>();
         this.LRUList = new ArrayList<Process>();
-        this.blockingTime = 6;
         this.readyQueue = new LinkedList<Process>();
         this.bQueue = new ArrayDeque<Process>();
         this.resultingList = new ArrayList<Process>();
@@ -25,12 +22,13 @@ public class LeastRecentlyUsed
     // accessors
 
     // mutators
-    public void setList(ArrayList<Process> r)
+    public void setList(ArrayList<Process> feedList)
     {
         // deep element arraylist cloning
-        for(int i = 0; i < r.size(); i++)
+        for (Process process : feedList) 
         {
-            this.LRUList.add(r.get(i));
+            Process inputProcess = new Process(process.getID(), process.getFileName(), process.getPages(), process.getQuantum());
+            this.LRUList.add(inputProcess);
         }
     }
 
@@ -49,41 +47,125 @@ public class LeastRecentlyUsed
         {
             // process is in blocking state
             process.setBlocked(cpuWatch);
+            process.faultTimeStamp(cpuWatch);
             bQueue.add(process);
         }
 
-        // business logic
-        while(this.LRUList.size() != this.resultingList.size())
-        {
-            // checking unblocked processes
-            for (Process process : bQueue)
-            {
-                if(bQueue.peek().canUnblock(cpuWatch) == true)
-                {
-                    System.out.println(bQueue.peek().getFileName() + ": is can be unblocked");
+        Process cProcess = null;
 
-                    // process is ready
-                    bQueue.peek().setReady();
-                    System.out.println(bQueue.peek().getFileName() + ": is in ready state");
-                    this.readyQueue.add(bQueue.poll());
+        // business logic
+        do
+        {
+            System.out.println("========= TIME: " + cpuWatch + " =========");
+
+            // there are processes ready for instructions
+            if(readyQueue.size() > 0)
+            {
+                cProcess = readyQueue.peek();
+                Page cPage = cProcess.grabPage();
+
+                // page is already in the memory
+                if(cProcess.inMemory(cPage) == true || cProcess.getNeverRun() == true)
+                {
+                    // work on it normally
+                    cProcess.setNeverRun(false);
+                    cProcess.addToMemory(cPage);
+                    cProcess.pageOver();
+                    cProcess.decrementLifespan();
+
+                    if(cProcess.getLifespan() == 0)
+                    {
+                        this.resultingList.add(cProcess);
+                        cProcess.setTurnAround(cpuWatch);
+                        this.readyQueue.poll();
+
+                        System.out.println(cProcess.getFileName() + " has finished on time: " + cpuWatch);
+                    }
+                    else
+                    {
+                        cProcess.decrementQuantum();
+                        System.out.println(cProcess.getFileName() + " has ran a piece of instruction (" + cProcess.getLifespan() + ")");
+
+                        // quantum burst is over
+                        if(cProcess.getQuantum() == 0)
+                        {
+                            // send to back of ready queue
+                            cProcess.resetQuantum();
+                            readyQueue.add(readyQueue.poll());
+                        }
+                    }
+                }
+                // page is not in the memory
+                else
+                {
+                    // issue a block
+                    cProcess.addToMemory(cPage);
+                    cProcess.setBlocked(cpuWatch);
+                    bQueue.add(cProcess);
+                    readyQueue.poll();
+
+                    System.out.println(cProcess.getFileName() + " is now in blocked state.");
+
+                    // next process
+                    if(readyQueue.size() > 0)
+                    {
+                        cProcess = readyQueue.peek();
+                        cPage = cProcess.grabPage();
+
+                        // work on it normally
+                        cProcess.setNeverRun(false);
+                        cProcess.addToMemory(cPage);
+                        cProcess.pageOver();
+                        cProcess.decrementLifespan();
+
+                        if(cProcess.getLifespan() == 0)
+                        {
+                            this.resultingList.add(cProcess);
+                            cProcess.setTurnAround(cpuWatch);
+                            this.readyQueue.poll();
+
+                            System.out.println(cProcess.getFileName() + " has finished on time: " + cpuWatch);
+                        }
+                        else
+                        {
+                            cProcess.decrementQuantum();
+                            System.out.println(cProcess.getFileName() + " has ran a piece of instruction (" + cProcess.getLifespan() + ")");
+
+                            // quantum burst is over
+                            if(cProcess.getQuantum() == 0)
+                            {
+                                // send to back of ready queue
+                                cProcess.resetQuantum();
+                                readyQueue.add(readyQueue.poll());
+                            }
+                        }
+
+                    }
                 }
             }
 
-            for (Process process : readyQueue) 
-            {
-                // 
-            }
+
 
             cpuWatch++;
-        }
+            // checking valid ready processes from the blocked queue
+            for(int i = 0; i < LRUList.size(); i++)
+            {
+                if(bQueue.size() != 0)
+                {
+                    if(bQueue.peek().canUnblock(cpuWatch) == true)
+                    {
+                        // process is ready
+                        this.readyQueue.add(bQueue.poll());
+                    }
+                }
+            }
+
+        } while (this.LRUList.size() != this.resultingList.size());
     }
 
     public void outputResults()
     {
-        for (Process p : LRUList)
-        {
-            p.printData();
-        }
+        //
     }
     
 }

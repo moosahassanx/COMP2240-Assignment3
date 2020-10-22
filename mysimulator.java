@@ -36,7 +36,7 @@ class mysimulator
 
                 try
                 {
-                    ArrayList<Integer> pages = new ArrayList<Integer>();
+                    ArrayList<Page> pages = new ArrayList<Page>();
                     String newText = "";
 
                     // reading the file
@@ -50,14 +50,14 @@ class mysimulator
                             if(!newText.equals("begin"))
                             {
                                 // managing and assigning data
-                                int pageNum = Integer.parseInt(newText);
+                                Page pageNum = new Page(Integer.parseInt(newText));
                                 pages.add(pageNum);
                             }
                         }
                     }
 
                     // create object with data and add to list
-                    Process process = new Process(processId, fileName, pages);
+                    Process process = new Process(processId, fileName, pages, quantumSize);
                     pList.add(process);
                     processId++;
                 }
