@@ -1,13 +1,13 @@
 import java.util.ArrayList;
 
-public class Process {
+public class Process 
+{
     // attributes
     private ArrayList<Page> pages;
     private ArrayList<Page> memory;
     private int ID;
     private String fileName;
     private int turnAround;
-    private int numFaults;
     ArrayList<Integer> faultTimeSheet;
     private int frames;
     private int timeToUnblock;
@@ -15,77 +15,77 @@ public class Process {
     private boolean neverRun;
     private int quantum;
     private int originalQuantum;
-    // TODO: lifespan
     private int lifespan;
 
     // constructor
-    public Process(int i, String f, ArrayList<Page> p, int q) {
+    public Process(int i, String f, ArrayList<Page> p, int q) 
+    {
         this.ID = i;
         this.fileName = f;
         this.pages = p;
         this.turnAround = 0;
-        this.numFaults = 0;
         this.faultTimeSheet = new ArrayList<Integer>();
         this.frames = 0;
         this.timeToUnblock = 0;
         cPage = assignFirstPage();
         memory = new ArrayList<Page>();
         this.neverRun = true;
+        this.originalQuantum = q;
         this.quantum = q;
         this.lifespan = this.pages.size();
         System.out.println(this.fileName + " has lifespan: " + this.lifespan);
     }
-    
+
     // acessors
-    public String getFileName()
+    public String getFileName() 
     {
         return this.fileName;
     }
-    
-    public int getTurnAround()
+
+    public int getTurnAround() 
     {
         return this.turnAround;
     }
 
-    public int getNumFaults()
+    public int getNumFaults() 
     {
-        return this.numFaults;
+        return this.faultTimeSheet.size();
     }
 
-    public int getFrames()
+    public int getFrames() 
     {
         return this.frames;
     }
 
-    public int getID()
+    public int getID() 
     {
         return this.ID;
     }
 
-    public ArrayList<Page> getPages()
+    public ArrayList<Page> getPages() 
     {
         return this.pages;
     }
 
-    public int getQuantum()
+    public int getQuantum() 
     {
         return this.quantum;
     }
 
-    public int getLifespan()
+    public int getLifespan() 
     {
         return this.lifespan;
     }
 
-    public String generateFaultList()
+    public String generateFaultList() 
     {
         String output = "{";
-        
-        if(faultTimeSheet.size() != 0)
-        {
-            faultTimeSheet.get(0);
 
-            for(int i = 1; i < faultTimeSheet.size() - 1; i++)
+        if (faultTimeSheet.size() != 0) 
+        {
+            output += faultTimeSheet.get(0);
+
+            for (int i = 1; i < faultTimeSheet.size(); i++) 
             {
                 output += ", " + faultTimeSheet.get(i);
             }
@@ -96,25 +96,24 @@ public class Process {
         return output;
     }
 
-    public boolean getNeverRun()
+    public boolean getNeverRun() 
     {
         return this.neverRun;
     }
 
     // mutators
-    public void decrementLifespan()
+    public void decrementLifespan() 
     {
         this.lifespan--;
     }
 
-    public void setTurnAround(int t)
+    public void setTurnAround(int t) 
     {
         this.turnAround = t;
     }
 
-    public void setNumFaults(int n)
+    public void setNumFaults(int n) 
     {
-        this.numFaults = n;
     }
 
     public void setFrames(int f)
@@ -124,6 +123,7 @@ public class Process {
 
     public void setBlocked(int cpuWatch)
     {
+        this.faultTimeSheet.add(cpuWatch);
         timeToUnblock = cpuWatch + 6;
     }
 

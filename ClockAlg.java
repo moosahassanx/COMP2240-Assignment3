@@ -1,11 +1,10 @@
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class LeastRecentlyUsed
+public class ClockAlg
 {
     private ArrayList<Process> LRUList;
     private Queue<Process> readyQueue;              // ready queue
@@ -13,7 +12,7 @@ public class LeastRecentlyUsed
     private ArrayList<Process> resultingList;       // final list to print
 
     // constructor
-    public LeastRecentlyUsed() {
+    public ClockAlg() {
         new ArrayList<Integer>();
         this.LRUList = new ArrayList<Process>();
         this.readyQueue = new LinkedList<Process>();
@@ -170,16 +169,6 @@ public class LeastRecentlyUsed
         {
             System.out.println(process.getID() + "\t" + process.getFileName() + "\t" + process.getTurnAround() + "\t\t" + process.getNumFaults() + "\t" + process.generateFaultList());
         }
-    }
-    
-}
-
-//sorting class in accordance to process ID
-class sortByProcessID implements Comparator<Process>
-{
-    public int compare(Process o1, Process o2) 
-    {
-        return o1.getID() - o2.getID();
     }
     
 }

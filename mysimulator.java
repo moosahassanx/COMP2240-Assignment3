@@ -72,35 +72,33 @@ class mysimulator
 
         // creating algorithms
         LeastRecentlyUsed LRU = new LeastRecentlyUsed();
+        ClockAlg clockObj = new ClockAlg();
 
         // allocated frames for each process
         int dividedFrames = numFrames / pList.size();
-        for (Process p : pList) 
+        for (Process p : pList)
         {
             p.setFrames(dividedFrames);
         }
 
         LRU.setList(pList);
-        
+        clockObj.setList(pList);
 
         // running algorithms
         LRU.RoundRobin();
+        clockObj.RoundRobin();
 
-
-        // TODO: FAKE OUTPUT
+        // output
         System.out.println("LRU - Fixed:");
-        System.out.println("PID  Process Name      Turnaround Time  # Faults  Fault Times  ");
+        System.out.println("PID  Process Name      Turnaround Time  # Faults  Fault Times");
         LRU.outputResults();
 
         System.out.println();
-        System.out.println("------------------------------------------------------------");
-        System.out.println();
+        System.out.println("------------------------------------------------------------ \n");
+        
         System.out.println("Clock - Fixed:");
-        System.out.println("PID  Process Name      Turnaround Time  # Faults  Fault Times  ");
-        System.out.println("1    Process1.txt      38               5         {0, 7, 16, 23, 30}");
-        System.out.println("2    Process2.txt      39               5         {0, 8, 17, 24, 31}");
-        System.out.println("3    Process3.txt      18               1         {0}");
-        System.out.println("4    Process4.txt      37               4         {0, 12, 19, 28}");
+        System.out.println("PID  Process Name      Turnaround Time  # Faults  Fault Times");
+        clockObj.outputResults();
 
     }
 }
