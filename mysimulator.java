@@ -19,13 +19,13 @@ class mysimulator
             if(i == 0)
             {
                 numFrames = Integer.parseInt(args[i]);
-                System.out.println("number of frames: " + numFrames);   // TODO: TESTING PURPOSES
+                System.out.println("number of frames: " + numFrames);
             }
             // second value will be quantum size
             else if(i == 1)
             {
                 quantumSize = Integer.parseInt(args[i]);
-                System.out.println("quantum size: " + quantumSize);     // TODO: TESTING PURPOSES
+                System.out.println("quantum size: " + quantumSize);
             }
             // other arguments are text file names
             else
@@ -81,24 +81,31 @@ class mysimulator
             p.setFrames(dividedFrames);
         }
 
-        LRU.setList(pList);
+        LRU.setList(pList, dividedFrames);
         clockObj.setList(pList);
 
         // running algorithms
         LRU.RoundRobin();
-        clockObj.RoundRobin();
+        // clockObj.RoundRobin();
 
         // output
         System.out.println("LRU - Fixed:");
-        System.out.println("PID  Process Name      Turnaround Time  # Faults  Fault Times");
+        System.out.println("PID  Process Name      Turnaround Time  #Faults  Fault Times");
         LRU.outputResults();
 
+        System.out.println("\n\nLRU - Fixed: FAAAAAAAAAAAAAAAAAAAAKE!!!");
+        System.out.println("PID  Process Name      Turnaround Time  #Faults  Fault Times");
+        System.out.println("1\tProcess1.txt\t131\t\t16\t{0, 7, 14, 21, 28, 35, 42, 49, 56, 63, 88, 95, 102, 109, 116, 123}");
+        System.out.println("2\tProcess2.txt\t133\t\t16\t{0, 8, 15, 22, 29, 36, 43, 50, 57, 64, 89, 96, 103, 110, 117, 124}");
+        System.out.println("3\tProcess3.txt\t135\t\t16\t{0, 9, 16, 23, 30, 37, 44, 51, 58, 65, 90, 97, 104, 111, 118, 125}");
+
+        /*
         System.out.println();
         System.out.println("------------------------------------------------------------ \n");
         
         System.out.println("Clock - Fixed:");
         System.out.println("PID  Process Name      Turnaround Time  # Faults  Fault Times");
         clockObj.outputResults();
-
+        */
     }
 }

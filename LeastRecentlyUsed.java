@@ -24,12 +24,13 @@ public class LeastRecentlyUsed
     // accessors
 
     // mutators
-    public void setList(ArrayList<Process> feedList)
+    public void setList(ArrayList<Process> feedList, int frames)
     {
         // deep element arraylist cloning
         for (Process process : feedList) 
         {
             Process inputProcess = new Process(process.getID(), process.getFileName(), process.getPages(), process.getQuantum());
+            inputProcess.setFrames(frames);
             this.LRUList.add(inputProcess);
         }
     }
@@ -66,11 +67,11 @@ public class LeastRecentlyUsed
                 Page cPage = cProcess.grabPage();
 
                 // page is already in the memory
-                if(cProcess.inMemory(cPage) == true || cProcess.getNeverRun() == true)
+                if((cProcess.inMemory(cPage) == true) && (cProcess.inPageStream(cPage)) || cProcess.getNeverRun() == true)
                 {
                     // work on it normally
                     cProcess.setNeverRun(false);
-                    cProcess.addToMemory(cPage);
+                    cProcess.addToMemory(cPage, cpuWatch);
                     cProcess.pageOver();
                     cProcess.decrementLifespan();
 
@@ -100,8 +101,9 @@ public class LeastRecentlyUsed
                 else
                 {
                     // issue a block
-                    cProcess.addToMemory(cPage);
+                    cProcess.addToMemory(cPage, cpuWatch);
                     cProcess.setBlocked(cpuWatch);
+                    cProcess.pageOver();
                     bQueue.add(cProcess);
                     readyQueue.poll();
 
@@ -115,7 +117,7 @@ public class LeastRecentlyUsed
 
                         // work on it normally
                         cProcess.setNeverRun(false);
-                        cProcess.addToMemory(cPage);
+                        cProcess.addToMemory(cPage, cpuWatch);
                         cProcess.pageOver();
                         cProcess.decrementLifespan();
 

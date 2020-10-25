@@ -69,7 +69,7 @@ public class ClockAlg
                 {
                     // work on it normally
                     cProcess.setNeverRun(false);
-                    cProcess.addToMemory(cPage);
+                    cProcess.addToMemory(cPage, cpuWatch);
                     cProcess.pageOver();
                     cProcess.decrementLifespan();
 
@@ -99,7 +99,7 @@ public class ClockAlg
                 else
                 {
                     // issue a block
-                    cProcess.addToMemory(cPage);
+                    cProcess.addToMemory(cPage, cpuWatch);
                     cProcess.setBlocked(cpuWatch);
                     bQueue.add(cProcess);
                     readyQueue.poll();
@@ -114,7 +114,7 @@ public class ClockAlg
 
                         // work on it normally
                         cProcess.setNeverRun(false);
-                        cProcess.addToMemory(cPage);
+                        cProcess.addToMemory(cPage, cpuWatch);
                         cProcess.pageOver();
                         cProcess.decrementLifespan();
 
