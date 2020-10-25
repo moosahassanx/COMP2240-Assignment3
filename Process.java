@@ -17,6 +17,7 @@ public class Process
     private int originalQuantum;
     private int lifespan;
     private PageStream pageStreamer;
+    private boolean pageReplaced;
 
     // constructor
     public Process(int i, String f, ArrayList<Page> p, int q)
@@ -35,6 +36,7 @@ public class Process
         this.quantum = q;
         this.lifespan = this.pages.size();
         this.pageStreamer = new PageStream();
+        this.pageReplaced = false;
     }
 
     // acessors
@@ -102,6 +104,11 @@ public class Process
         return this.neverRun;
     }
 
+    public boolean getPageReplaced()
+    {
+        return this.pageReplaced;
+    }
+
     // mutators
     public void decrementLifespan() 
     {
@@ -133,6 +140,11 @@ public class Process
         this.neverRun = n;
     }
 
+    public void setPageReplaced(boolean p)
+    {
+        this.pageReplaced = p;
+    }
+
     // methods
     public void faultTimeStamp(int faultTime)
     {
@@ -153,12 +165,12 @@ public class Process
     {
         if(this.pageStreamer.getPageIDList().contains(p.getPageNum()))
         {
-            System.out.println(p.getPageNum() + " is in the page stream.");
+            // System.out.println(p.getPageNum() + " is in the page stream.");
             return true;
         }
         else
         {
-            System.out.println(p.getPageNum() + " is NOT in the page stream.");
+            // System.out.println(p.getPageNum() + " is NOT in the page stream.");
             return false;
         }
     }
@@ -169,32 +181,28 @@ public class Process
         {
             if(page.getPageNum() == p.getPageNum())
             {
-                System.out.println(p.getPageNum() + " is in the memory.");
+                // System.out.println(p.getPageNum() + " is in the memory.");
                 return true;
             }
         }
 
-        System.out.println(p.getPageNum() + " is NOT in the memory.");
+        // System.out.println(p.getPageNum() + " is NOT in the memory.");
         return false;
     }
 
     public void addToMemory(Page p, int cpuWatch)
     {
         memory.add(p);
-        System.out.println(p.getPageNum() + " has been added to the memory.");
+        // System.out.println(p.getPageNum() + " has been added to the memory.");
+    }
 
+    public void addToPageStream(Page p, int cpuWatch)
+    {
         // add to page stream
         if(this.pageStreamer.getPageIDList().size() < frames)
         {
             this.pageStreamer.getPageIDList().add(p.getPageNum());
             this.pageStreamer.getTimeAddedList().add(cpuWatch);
-
-            // TODO: FOR TESTING PURPOSES
-            System.out.println("(page | cpuWatch):");
-            for(int i = 0; i < pageStreamer.getPageIDList().size(); i++)
-            {
-                System.out.println(pageStreamer.getPageIDList().get(i) + " | " + pageStreamer.getTimeAddedList().get(i));
-            }
         }
         // perform page replacement
         else
@@ -228,15 +236,25 @@ public class Process
                 // updating page streamer
                 this.pageStreamer.getPageIDList().set(indexer, p.getPageNum());
                 this.pageStreamer.getTimeAddedList().set(indexer, cpuWatch);
-            }
-
-            // TODO: FOR TESTING PURPOSES
-            System.out.println("(page | cpuWatch):");
-            for(int i = 0; i < pageStreamer.getPageIDList().size(); i++)
-            {
-                System.out.println(pageStreamer.getPageIDList().get(i) + " | " + pageStreamer.getTimeAddedList().get(i));
+                
+                // the next page id is in the page streamer so we wouldnt have to restart the original call method
+                if(this.pageStreamer.getPageIDList().contains(p.getNext().getPageNum()))
+                {
+                    this.pageReplaced = false;
+                }
+                else
+                {
+                    this.pageReplaced = true;
+                }
             }
         }
+
+        // TODO: FOR TESTING PURPOSES
+        // System.out.println("(page | cpuWatch):");
+        // for(int i = 0; i < pageStreamer.getPageIDList().size(); i++)
+        // {
+        //     System.out.println(pageStreamer.getPageIDList().get(i) + " | " + pageStreamer.getTimeAddedList().get(i));
+        // }
     }
 
     public void pageOver()

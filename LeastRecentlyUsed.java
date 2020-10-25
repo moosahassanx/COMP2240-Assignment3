@@ -58,20 +58,62 @@ public class LeastRecentlyUsed
         // business logic
         do
         {
-            System.out.println("========= TIME: " + cpuWatch + " =========");
-
             // there are processes ready for instructions
             if(readyQueue.size() > 0)
             {
                 cProcess = readyQueue.peek();
                 Page cPage = cProcess.grabPage();
 
-                // page is already in the memory
-                if((cProcess.inMemory(cPage) == true) && (cProcess.inPageStream(cPage)) || cProcess.getNeverRun() == true)
+                // page replacement had just occurred
+                if(cProcess.getPageReplaced() == true)
+                {
+                    // issue a block
+                    cProcess.addToMemory(cPage, cpuWatch);
+                    cProcess.setNeverRun(false);
+                    cProcess.setBlocked(cpuWatch);
+                    cProcess.setPageReplaced(false);
+                    bQueue.add(cProcess);
+                    readyQueue.poll();
+
+                    // next process
+                    if(readyQueue.size() > 0)
+                    {
+                        cProcess = readyQueue.peek();
+                        cPage = cProcess.grabPage();
+
+                        // work on it normally
+                        cProcess.setNeverRun(false);
+                        cProcess.addToMemory(cPage, cpuWatch);
+                        cProcess.addToPageStream(cPage, cpuWatch);
+                        cProcess.pageOver();
+                        cProcess.decrementLifespan();
+
+                        if(cProcess.getLifespan() == 0)
+                        {
+                            this.resultingList.add(cProcess);
+                            cProcess.setTurnAround(cpuWatch);
+                            this.readyQueue.poll();
+                        }
+                        else
+                        {
+                            cProcess.decrementQuantum();
+                            // quantum burst is over
+                            if(cProcess.getQuantum() == 0)
+                            {
+                                // send to back of ready queue
+                                cProcess.resetQuantum();
+                                readyQueue.add(readyQueue.poll());
+                            }
+                        }
+                    }
+                }
+                // page is already in the memory AND page is in page stream
+                else if(cProcess.inMemory(cPage) == true || cProcess.inPageStream(cPage) == true || cProcess.getNeverRun() == true)
                 {
                     // work on it normally
                     cProcess.setNeverRun(false);
                     cProcess.addToMemory(cPage, cpuWatch);
+                    cProcess.addToPageStream(cPage, cpuWatch);
                     cProcess.pageOver();
                     cProcess.decrementLifespan();
 
@@ -80,13 +122,10 @@ public class LeastRecentlyUsed
                         this.resultingList.add(cProcess);
                         cProcess.setTurnAround(cpuWatch + 1);
                         this.readyQueue.poll();
-
-                        System.out.println(cProcess.getFileName() + " has finished on time: " + cpuWatch);
                     }
                     else
                     {
                         cProcess.decrementQuantum();
-                        System.out.println(cProcess.getFileName() + " has ran a piece of instruction (" + cProcess.getLifespan() + ")");
 
                         // quantum burst is over
                         if(cProcess.getQuantum() == 0)
@@ -102,12 +141,11 @@ public class LeastRecentlyUsed
                 {
                     // issue a block
                     cProcess.addToMemory(cPage, cpuWatch);
+                    cProcess.setNeverRun(false);
                     cProcess.setBlocked(cpuWatch);
-                    cProcess.pageOver();
                     bQueue.add(cProcess);
                     readyQueue.poll();
 
-                    System.out.println(cProcess.getFileName() + " is now in blocked state.");
 
                     // next process
                     if(readyQueue.size() > 0)
@@ -118,6 +156,7 @@ public class LeastRecentlyUsed
                         // work on it normally
                         cProcess.setNeverRun(false);
                         cProcess.addToMemory(cPage, cpuWatch);
+                        cProcess.addToPageStream(cPage, cpuWatch);
                         cProcess.pageOver();
                         cProcess.decrementLifespan();
 
@@ -126,13 +165,10 @@ public class LeastRecentlyUsed
                             this.resultingList.add(cProcess);
                             cProcess.setTurnAround(cpuWatch);
                             this.readyQueue.poll();
-
-                            System.out.println(cProcess.getFileName() + " has finished on time: " + cpuWatch);
                         }
                         else
                         {
                             cProcess.decrementQuantum();
-                            System.out.println(cProcess.getFileName() + " has ran a piece of instruction (" + cProcess.getLifespan() + ")");
 
                             // quantum burst is over
                             if(cProcess.getQuantum() == 0)
