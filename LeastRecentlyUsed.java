@@ -38,11 +38,6 @@ public class LeastRecentlyUsed
     // methods
     public void RoundRobin()
     {
-        for (Process p : LRUList)
-        {
-            p.printer();
-        }
-
         int cpuWatch = 0;
 
         // add all processes to blocking queue

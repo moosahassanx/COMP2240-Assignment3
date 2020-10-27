@@ -23,12 +23,13 @@ public class ClockAlg
     // accessors
 
     // mutators
-    public void setList(ArrayList<Process> feedList)
+    public void setList(ArrayList<Process> feedList, int frames)
     {
         // deep element arraylist cloning
         for (Process process : feedList) 
         {
             Process inputProcess = new Process(process.getID(), process.getFileName(), process.getPages(), process.getQuantum());
+            inputProcess.setFrames(frames);
             this.LRUList.add(inputProcess);
         }
     }
@@ -36,11 +37,6 @@ public class ClockAlg
     // methods
     public void RoundRobin()
     {
-        for (Process p : LRUList)
-        {
-            p.printer();
-        }
-
         int cpuWatch = 0;
 
         // add all processes to blocking queue
@@ -56,7 +52,7 @@ public class ClockAlg
         // business logic
         do
         {
-            System.out.println("========= TIME: " + cpuWatch + " =========");
+            // System.out.println("========= TIME: " + cpuWatch + " =========");
 
             // there are processes ready for instructions
             if(readyQueue.size() > 0)
@@ -64,27 +60,81 @@ public class ClockAlg
                 cProcess = readyQueue.peek();
                 Page cPage = cProcess.grabPage();
 
+                // page replacement had just occurred
+                if(cProcess.getPageReplaced() == true)
+                {
+                    // issue a block
+                    cProcess.addToMemory(cPage, cpuWatch);
+                    cProcess.setBlocked(cpuWatch);
+                    cProcess.setPageReplaced(false);
+                    bQueue.add(cProcess);
+                    readyQueue.poll();
+
+                    // System.out.println(cProcess.getFileName() + " is now in blocked state.");
+
+                    // next process
+                    if(readyQueue.size() > 0)
+                    {
+                        cProcess = readyQueue.peek();
+                        cPage = cProcess.grabPage();
+
+                        // work on it normally
+                        cProcess.setNeverRun(false);
+                        cProcess.addToMemory(cPage, cpuWatch);
+                        cProcess.addToClock(cPage);
+                        cProcess.pageOver();
+                        cProcess.decrementLifespan();
+
+                        // process is finished computing
+                        if(cProcess.getLifespan() == 0)
+                        {
+                            this.resultingList.add(cProcess);
+                            cProcess.setTurnAround(cpuWatch);
+                            this.readyQueue.poll();
+
+                            // System.out.println(cProcess.getFileName() + " has finished on time: " + cpuWatch);
+                        }
+                        // process still need work done
+                        else
+                        {
+                            cProcess.decrementQuantum();
+                            // System.out.println(cProcess.getFileName() + " has ran a piece of instruction (" + cProcess.getLifespan() + ")");
+
+                            // quantum burst is over
+                            if(cProcess.getQuantum() == 0)
+                            {
+                                // send to back of ready queue
+                                cProcess.resetQuantum();
+                                readyQueue.add(readyQueue.poll());
+                            }
+                        }
+
+                    }
+                }
                 // page is already in the memory
-                if(cProcess.inMemory(cPage) == true || cProcess.getNeverRun() == true)
+                else if(cProcess.inMemory(cPage) == true || cProcess.getNeverRun() == true || cProcess.inClock(cPage) == true)
                 {
                     // work on it normally
                     cProcess.setNeverRun(false);
                     cProcess.addToMemory(cPage, cpuWatch);
+                    cProcess.addToClock(cPage);
                     cProcess.pageOver();
                     cProcess.decrementLifespan();
 
+                    // the process is finished computing
                     if(cProcess.getLifespan() == 0)
                     {
                         this.resultingList.add(cProcess);
                         cProcess.setTurnAround(cpuWatch + 1);
                         this.readyQueue.poll();
 
-                        System.out.println(cProcess.getFileName() + " has finished on time: " + cpuWatch);
+                        // System.out.println(cProcess.getFileName() + " has finished on time: " + cpuWatch);
                     }
+                    // process still needs work done
                     else
                     {
                         cProcess.decrementQuantum();
-                        System.out.println(cProcess.getFileName() + " has ran a piece of instruction (" + cProcess.getLifespan() + ")");
+                        // System.out.println(cProcess.getFileName() + " has ran a piece of instruction (" + cProcess.getLifespan() + ")");
 
                         // quantum burst is over
                         if(cProcess.getQuantum() == 0)
@@ -104,7 +154,7 @@ public class ClockAlg
                     bQueue.add(cProcess);
                     readyQueue.poll();
 
-                    System.out.println(cProcess.getFileName() + " is now in blocked state.");
+                    // System.out.println(cProcess.getFileName() + " is now in blocked state.");
 
                     // next process
                     if(readyQueue.size() > 0)
@@ -115,21 +165,24 @@ public class ClockAlg
                         // work on it normally
                         cProcess.setNeverRun(false);
                         cProcess.addToMemory(cPage, cpuWatch);
+                        cProcess.addToClock(cPage);
                         cProcess.pageOver();
                         cProcess.decrementLifespan();
 
+                        // process is finished computing
                         if(cProcess.getLifespan() == 0)
                         {
                             this.resultingList.add(cProcess);
                             cProcess.setTurnAround(cpuWatch);
                             this.readyQueue.poll();
 
-                            System.out.println(cProcess.getFileName() + " has finished on time: " + cpuWatch);
+                            // System.out.println(cProcess.getFileName() + " has finished on time: " + cpuWatch);
                         }
+                        // process still need work done
                         else
                         {
                             cProcess.decrementQuantum();
-                            System.out.println(cProcess.getFileName() + " has ran a piece of instruction (" + cProcess.getLifespan() + ")");
+                            // System.out.println(cProcess.getFileName() + " has ran a piece of instruction (" + cProcess.getLifespan() + ")");
 
                             // quantum burst is over
                             if(cProcess.getQuantum() == 0)

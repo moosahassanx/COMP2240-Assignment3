@@ -18,6 +18,8 @@ public class Process
     private int lifespan;
     private PageStream pageStreamer;
     private boolean pageReplaced;
+    private Clock clockTracker;
+    private int clockPtr;
 
     // constructor
     public Process(int i, String f, ArrayList<Page> p, int q)
@@ -37,6 +39,8 @@ public class Process
         this.lifespan = this.pages.size();
         this.pageStreamer = new PageStream();
         this.pageReplaced = false;
+        this.clockTracker = new Clock();
+        this.clockPtr = 0;
     }
 
     // acessors
@@ -146,6 +150,106 @@ public class Process
     }
 
     // methods
+    public void addToClock(Page p)
+    {
+        // empty spaces
+        if(this.clockTracker.getPageIDList().size() < frames)
+        {
+            this.clockTracker.getPageIDList().add(p.getPageNum());      // add page number
+            this.clockTracker.getBitList().add(1);                      // bit to 1
+            
+            // System.out.println("page(" + p.getPageNum() + ") has been added at index: " + this.clockPtr);
+
+            // clock pointer cannot go beyond number of frames
+            this.clockPtr++;
+            if(this.clockPtr > this.frames - 1)
+            {
+                this.clockPtr = 0;
+            }
+        }
+        // spaces are all full (replacement strategy begins here)
+        else
+        {
+            // page number exists in clock
+            if(this.clockTracker.getPageIDList().contains(p.getPageNum()))
+            {
+                // dont move the pointer
+                // need a way to temporarily index to that page number in the array
+            }
+            // page number does not exist in clock
+            else
+            {
+                for(int i = this.clockPtr; i < this.clockTracker.getPageIDList().size(); i++)
+                {
+                    // scan the page stream to find a frame with a 0-bit
+                    if(this.clockTracker.getBitList().get(i) == 1)
+                    {
+                        // each time it finds a frame with a 1-bit, set it to 0 and carry on
+                        this.clockTracker.getBitList().set(i, 0);
+                    }
+                    else
+                    {
+                        // set the clock pointer value for replacement
+                        this.clockPtr = i;
+                        break;
+                    }
+                }
+
+                // replace the page in the clock pointer
+                this.clockTracker.getPageIDList().set(this.clockPtr, p.getPageNum());
+                this.clockTracker.getBitList().set(this.clockPtr, 1);
+
+                // clock pointer cannot go beyond number of frames
+                this.clockPtr++;
+                if(this.clockPtr > this.frames - 1)
+                {
+                    this.clockPtr = 0;
+                }
+
+                // the next page id is in the clock so we wouldnt have to restart the original call method
+                if(p.getNext() != null)    // null checker
+                {
+                    if(this.clockTracker.getPageIDList().contains(p.getNext().getPageNum()))
+                    {
+                        this.pageReplaced = false;
+                    }
+                    else
+                    {
+                        this.pageReplaced = true;
+                    }
+                }
+                else
+                {
+                    this.pageReplaced = false;
+                }
+                
+            }
+        }
+
+
+        // TODO: for testing purposes
+        // System.out.println("ID | BIT");
+        // for(int i = 0; i < this.clockTracker.getPageIDList().size(); i++)
+        // {
+        //     System.out.println(this.clockTracker.getPageIDList().get(i) + " | " + this.clockTracker.getBitList().get(i));
+        // }
+
+    }
+
+    public boolean inClock(Page p)
+    {
+        if(this.clockTracker.getPageIDList().contains(p.getPageNum()))
+        {
+            // System.out.println(p.getPageNum() + " is in in clock");
+            return true;
+        }
+        else
+        {
+            // System.out.println(p.getPageNum() + " is NOT in clock");
+            return false;
+        }
+    }
+
     public void faultTimeStamp(int faultTime)
     {
         this.faultTimeSheet.add(faultTime);
