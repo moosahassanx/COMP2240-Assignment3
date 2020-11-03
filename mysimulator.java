@@ -19,13 +19,11 @@ class mysimulator
             if(i == 0)
             {
                 numFrames = Integer.parseInt(args[i]);
-                System.out.println("number of frames: " + numFrames);
             }
             // second value will be quantum size
             else if(i == 1)
             {
                 quantumSize = Integer.parseInt(args[i]);
-                System.out.println("quantum size: " + quantumSize);
             }
             // other arguments are text file names
             else

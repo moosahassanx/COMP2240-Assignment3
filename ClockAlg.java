@@ -220,7 +220,13 @@ public class ClockAlg
         Collections.sort(resultingList, new sortByProcessID());
         for (Process process : resultingList) 
         {
-            System.out.println(process.getID() + "\t" + process.getFileName() + "\t" + process.getTurnAround() + "\t\t" + process.getNumFaults() + "\t" + process.generateFaultList());
+            String strID = Integer.toString(process.getID());
+            String strProcessName = process.getFileName();
+            String strTurnAround = Integer.toString(process.getTurnAround());
+            String strFaults = Integer.toString(process.getNumFaults());
+            String strFaultList = process.generateFaultList();
+
+            System.out.printf(strID + "    " + strProcessName + "      " + strTurnAround + "              " + strFaults + "        " + strFaultList + "\n");
         }
     }
     

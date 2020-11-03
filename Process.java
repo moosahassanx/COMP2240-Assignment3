@@ -226,14 +226,6 @@ public class Process
             }
         }
 
-
-        // TODO: for testing purposes
-        // System.out.println("ID | BIT");
-        // for(int i = 0; i < this.clockTracker.getPageIDList().size(); i++)
-        // {
-        //     System.out.println(this.clockTracker.getPageIDList().get(i) + " | " + this.clockTracker.getBitList().get(i));
-        // }
-
     }
 
     public boolean inClock(Page p)
@@ -352,13 +344,6 @@ public class Process
                 }
             }
         }
-
-        // TODO: FOR TESTING PURPOSES
-        // System.out.println("(page | cpuWatch):");
-        // for(int i = 0; i < pageStreamer.getPageIDList().size(); i++)
-        // {
-        //     System.out.println(pageStreamer.getPageIDList().get(i) + " | " + pageStreamer.getTimeAddedList().get(i));
-        // }
     }
 
     public void pageOver()
