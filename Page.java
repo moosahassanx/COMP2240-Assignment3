@@ -1,12 +1,20 @@
+// TITLE: 					Assignment3
+// COURSE: 					COMP2240
+// AUTHOR: 					Moosa Hassan
+// STUDENT NUMBER: 			3331532
+// DATE: 					08/11/2020 
+// DESCRIPTION: 			helper class for process class - used to create an arraylist of pages depending on user input
+
+// importing java library
 import java.util.ArrayList;
 
 public class Page
 {
     // attributes
-    private ArrayList<Integer> history;
-    private int pageNum;
+    private final ArrayList<Integer> history;
+    private final int pageNum;
     private Page next;
-    
+
     // constructor
     public Page() 
     {
@@ -14,7 +22,7 @@ public class Page
         this.history = new ArrayList<Integer>();
     }
 
-    public Page(int p) 
+    public Page(final int p) 
     {
         this.pageNum = p;
         this.history = new ArrayList<Integer>();
@@ -37,19 +45,19 @@ public class Page
     }
 
     // mutator
-    public void setNext(Page n) 
+    public void setNext(final Page n) 
     {
         this.next = n;
     }
 
-    public void setPrevious(Page p) 
+    public void setPrevious(final Page p) 
     {
     }
-    
+
     // methods
-    public boolean inMemory(int compareInt)
+    public boolean inMemory(final int compareInt) 
     {
-        for (Integer integer : history) 
+        for (final Integer integer : history) 
         {
             if(integer == compareInt)
             {

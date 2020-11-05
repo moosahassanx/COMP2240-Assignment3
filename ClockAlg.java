@@ -1,3 +1,11 @@
+// TITLE: 					Assignment3
+// COURSE: 					COMP2240
+// AUTHOR: 					Moosa Hassan
+// STUDENT NUMBER: 			3331532
+// DATE: 					08/11/2020 
+// DESCRIPTION: 			Clock Algorithm class
+
+// importing java libraries
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,29 +14,28 @@ import java.util.Queue;
 
 public class ClockAlg
 {
-    private ArrayList<Process> LRUList;
-    private Queue<Process> readyQueue;              // ready queue
-    private ArrayDeque<Process> bQueue;             // blocked queue
-    private ArrayList<Process> resultingList;       // final list to print
+    // attributes
+    private final ArrayList<Process> LRUList;
+    private final Queue<Process> readyQueue; // ready queue
+    private final ArrayDeque<Process> bQueue; // blocked queue
+    private final ArrayList<Process> resultingList; // final list to print
 
     // constructor
-    public ClockAlg() {
-        new ArrayList<Integer>();
+    public ClockAlg() 
+    {
         this.LRUList = new ArrayList<Process>();
         this.readyQueue = new LinkedList<Process>();
         this.bQueue = new ArrayDeque<Process>();
         this.resultingList = new ArrayList<Process>();
     }
 
-    // accessors
-
     // mutators
-    public void setList(ArrayList<Process> feedList, int frames)
+    public void setList(final ArrayList<Process> feedList, final int frames) 
     {
         // deep element arraylist cloning
-        for (Process process : feedList) 
+        for (final Process process : feedList) 
         {
-            Process inputProcess = new Process(process.getID(), process.getFileName(), process.getPages(), process.getQuantum());
+            final Process inputProcess = new Process(process.getID(), process.getFileName(), process.getPages(), process.getQuantum());
             inputProcess.setFrames(frames);
             this.LRUList.add(inputProcess);
         }
@@ -40,7 +47,7 @@ public class ClockAlg
         int cpuWatch = 0;
 
         // add all processes to blocking queue
-        for (Process process : LRUList)
+        for (final Process process : LRUList) 
         {
             // process is in blocking state
             process.setBlocked(cpuWatch);
@@ -50,18 +57,16 @@ public class ClockAlg
         Process cProcess = null;
 
         // business logic
-        do
+        do 
         {
-            // System.out.println("========= TIME: " + cpuWatch + " =========");
-
             // there are processes ready for instructions
-            if(readyQueue.size() > 0)
+            if (readyQueue.size() > 0) 
             {
                 cProcess = readyQueue.peek();
                 Page cPage = cProcess.grabPage();
 
                 // page replacement had just occurred
-                if(cProcess.getPageReplaced() == true)
+                if (cProcess.getPageReplaced() == true) 
                 {
                     // issue a block
                     cProcess.addToMemory(cPage, cpuWatch);
@@ -70,10 +75,8 @@ public class ClockAlg
                     bQueue.add(cProcess);
                     readyQueue.poll();
 
-                    // System.out.println(cProcess.getFileName() + " is now in blocked state.");
-
                     // next process
-                    if(readyQueue.size() > 0)
+                    if (readyQueue.size() > 0) 
                     {
                         cProcess = readyQueue.peek();
                         cPage = cProcess.grabPage();
@@ -86,22 +89,19 @@ public class ClockAlg
                         cProcess.decrementLifespan();
 
                         // process is finished computing
-                        if(cProcess.getLifespan() == 0)
+                        if (cProcess.getLifespan() == 0) 
                         {
                             this.resultingList.add(cProcess);
                             cProcess.setTurnAround(cpuWatch);
                             this.readyQueue.poll();
-
-                            // System.out.println(cProcess.getFileName() + " has finished on time: " + cpuWatch);
                         }
                         // process still need work done
-                        else
+                        else 
                         {
                             cProcess.decrementQuantum();
-                            // System.out.println(cProcess.getFileName() + " has ran a piece of instruction (" + cProcess.getLifespan() + ")");
 
                             // quantum burst is over
-                            if(cProcess.getQuantum() == 0)
+                            if (cProcess.getQuantum() == 0) 
                             {
                                 // send to back of ready queue
                                 cProcess.resetQuantum();
@@ -112,7 +112,7 @@ public class ClockAlg
                     }
                 }
                 // page is already in the memory
-                else if(cProcess.inMemory(cPage) == true || cProcess.getNeverRun() == true || cProcess.inClock(cPage) == true)
+                else if (cProcess.inMemory(cPage) == true || cProcess.getNeverRun() == true || cProcess.inClock(cPage) == true) 
                 {
                     // work on it normally
                     cProcess.setNeverRun(false);
@@ -122,22 +122,19 @@ public class ClockAlg
                     cProcess.decrementLifespan();
 
                     // the process is finished computing
-                    if(cProcess.getLifespan() == 0)
+                    if (cProcess.getLifespan() == 0) 
                     {
                         this.resultingList.add(cProcess);
                         cProcess.setTurnAround(cpuWatch + 1);
                         this.readyQueue.poll();
-
-                        // System.out.println(cProcess.getFileName() + " has finished on time: " + cpuWatch);
                     }
                     // process still needs work done
-                    else
+                    else 
                     {
                         cProcess.decrementQuantum();
-                        // System.out.println(cProcess.getFileName() + " has ran a piece of instruction (" + cProcess.getLifespan() + ")");
 
                         // quantum burst is over
-                        if(cProcess.getQuantum() == 0)
+                        if (cProcess.getQuantum() == 0) 
                         {
                             // send to back of ready queue
                             cProcess.resetQuantum();
@@ -146,7 +143,7 @@ public class ClockAlg
                     }
                 }
                 // page is not in the memory
-                else
+                else 
                 {
                     // issue a block
                     cProcess.addToMemory(cPage, cpuWatch);
@@ -154,10 +151,8 @@ public class ClockAlg
                     bQueue.add(cProcess);
                     readyQueue.poll();
 
-                    // System.out.println(cProcess.getFileName() + " is now in blocked state.");
-
                     // next process
-                    if(readyQueue.size() > 0)
+                    if (readyQueue.size() > 0) 
                     {
                         cProcess = readyQueue.peek();
                         cPage = cProcess.grabPage();
@@ -170,22 +165,19 @@ public class ClockAlg
                         cProcess.decrementLifespan();
 
                         // process is finished computing
-                        if(cProcess.getLifespan() == 0)
+                        if (cProcess.getLifespan() == 0) 
                         {
                             this.resultingList.add(cProcess);
                             cProcess.setTurnAround(cpuWatch);
                             this.readyQueue.poll();
-
-                            // System.out.println(cProcess.getFileName() + " has finished on time: " + cpuWatch);
                         }
                         // process still need work done
-                        else
+                        else 
                         {
                             cProcess.decrementQuantum();
-                            // System.out.println(cProcess.getFileName() + " has ran a piece of instruction (" + cProcess.getLifespan() + ")");
-
+                            
                             // quantum burst is over
-                            if(cProcess.getQuantum() == 0)
+                            if (cProcess.getQuantum() == 0) 
                             {
                                 // send to back of ready queue
                                 cProcess.resetQuantum();
@@ -200,11 +192,11 @@ public class ClockAlg
             cpuWatch++;
 
             // checking valid ready processes from the blocked queue
-            for(int i = 0; i < LRUList.size(); i++)
+            for (int i = 0; i < LRUList.size(); i++) 
             {
-                if(bQueue.size() != 0)
+                if (bQueue.size() != 0) 
                 {
-                    if(bQueue.peek().canUnblock(cpuWatch) == true)
+                    if (bQueue.peek().canUnblock(cpuWatch) == true) 
                     {
                         // process is ready
                         this.readyQueue.add(bQueue.poll());
@@ -212,19 +204,21 @@ public class ClockAlg
                 }
             }
 
-        } while (this.LRUList.size() != this.resultingList.size());
+        } 
+        while (this.LRUList.size() != this.resultingList.size());
     }
 
-    public void outputResults()
+    public void outputResults() 
     {
+        // print the data of the list of processes in order of ID
         Collections.sort(resultingList, new sortByProcessID());
-        for (Process process : resultingList) 
+        for (final Process process : resultingList) 
         {
-            String strID = Integer.toString(process.getID());
-            String strProcessName = process.getFileName();
-            String strTurnAround = Integer.toString(process.getTurnAround());
-            String strFaults = Integer.toString(process.getNumFaults());
-            String strFaultList = process.generateFaultList();
+            final String strID = Integer.toString(process.getID());
+            final String strProcessName = process.getFileName();
+            final String strTurnAround = Integer.toString(process.getTurnAround());
+            final String strFaults = Integer.toString(process.getNumFaults());
+            final String strFaultList = process.generateFaultList();
 
             System.out.printf(strID + "    " + strProcessName + "      " + strTurnAround + "              " + strFaults + "        " + strFaultList + "\n");
         }
