@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class ClockAlg
+public class ClockAlg 
 {
     // attributes
     private final ArrayList<Process> LRUList;
@@ -21,8 +21,8 @@ public class ClockAlg
     private final ArrayList<Process> resultingList; // final list to print
 
     // constructor
-    public ClockAlg() 
-    {
+    public ClockAlg()
+	{
         this.LRUList = new ArrayList<Process>();
         this.readyQueue = new LinkedList<Process>();
         this.bQueue = new ArrayDeque<Process>();
@@ -30,11 +30,11 @@ public class ClockAlg
     }
 
     // mutators
-    public void setList(final ArrayList<Process> feedList, final int frames) 
-    {
+    public void setList(final ArrayList<Process> feedList, final int frames)
+	{
         // deep element arraylist cloning
-        for (final Process process : feedList) 
-        {
+        for (final Process process : feedList)
+		{
             final Process inputProcess = new Process(process.getID(), process.getFileName(), process.getPages(), process.getQuantum());
             inputProcess.setFrames(frames);
             this.LRUList.add(inputProcess);
@@ -43,12 +43,12 @@ public class ClockAlg
 
     // methods
     public void RoundRobin()
-    {
+	{
         int cpuWatch = 0;
 
         // add all processes to blocking queue
-        for (final Process process : LRUList) 
-        {
+        for (final Process process : LRUList)
+		{
             // process is in blocking state
             process.setBlocked(cpuWatch);
             bQueue.add(process);
@@ -57,17 +57,17 @@ public class ClockAlg
         Process cProcess = null;
 
         // business logic
-        do 
-        {
+        do
+		{
             // there are processes ready for instructions
-            if (readyQueue.size() > 0) 
-            {
+            if (readyQueue.size() > 0)
+			{
                 cProcess = readyQueue.peek();
                 Page cPage = cProcess.grabPage();
 
                 // page replacement had just occurred
-                if (cProcess.getPageReplaced() == true) 
-                {
+                if (cProcess.getPageReplaced() == true)
+				{
                     // issue a block
                     cProcess.addToMemory(cPage, cpuWatch);
                     cProcess.setBlocked(cpuWatch);
@@ -76,8 +76,8 @@ public class ClockAlg
                     readyQueue.poll();
 
                     // next process
-                    if (readyQueue.size() > 0) 
-                    {
+                    if (readyQueue.size() > 0)
+					{
                         cProcess = readyQueue.peek();
                         cPage = cProcess.grabPage();
 
@@ -89,20 +89,20 @@ public class ClockAlg
                         cProcess.decrementLifespan();
 
                         // process is finished computing
-                        if (cProcess.getLifespan() == 0) 
-                        {
+                        if (cProcess.getLifespan() == 0)
+						{
                             this.resultingList.add(cProcess);
                             cProcess.setTurnAround(cpuWatch);
                             this.readyQueue.poll();
                         }
                         // process still need work done
-                        else 
-                        {
+                        else
+						{
                             cProcess.decrementQuantum();
 
                             // quantum burst is over
-                            if (cProcess.getQuantum() == 0) 
-                            {
+                            if (cProcess.getQuantum() == 0)
+							{
                                 // send to back of ready queue
                                 cProcess.resetQuantum();
                                 readyQueue.add(readyQueue.poll());
@@ -112,8 +112,8 @@ public class ClockAlg
                     }
                 }
                 // page is already in the memory
-                else if (cProcess.inMemory(cPage) == true || cProcess.getNeverRun() == true || cProcess.inClock(cPage) == true) 
-                {
+                else if (cProcess.inMemory(cPage) == true || cProcess.getNeverRun() == true || cProcess.inClock(cPage) == true)
+				{
                     // work on it normally
                     cProcess.setNeverRun(false);
                     cProcess.addToMemory(cPage, cpuWatch);
@@ -122,20 +122,20 @@ public class ClockAlg
                     cProcess.decrementLifespan();
 
                     // the process is finished computing
-                    if (cProcess.getLifespan() == 0) 
-                    {
+                    if (cProcess.getLifespan() == 0)
+					{
                         this.resultingList.add(cProcess);
                         cProcess.setTurnAround(cpuWatch + 1);
                         this.readyQueue.poll();
                     }
                     // process still needs work done
-                    else 
-                    {
+                    else
+					{
                         cProcess.decrementQuantum();
 
                         // quantum burst is over
-                        if (cProcess.getQuantum() == 0) 
-                        {
+                        if (cProcess.getQuantum() == 0)
+						{
                             // send to back of ready queue
                             cProcess.resetQuantum();
                             readyQueue.add(readyQueue.poll());
@@ -143,8 +143,8 @@ public class ClockAlg
                     }
                 }
                 // page is not in the memory
-                else 
-                {
+                else
+				{
                     // issue a block
                     cProcess.addToMemory(cPage, cpuWatch);
                     cProcess.setBlocked(cpuWatch);
@@ -152,8 +152,8 @@ public class ClockAlg
                     readyQueue.poll();
 
                     // next process
-                    if (readyQueue.size() > 0) 
-                    {
+                    if (readyQueue.size() > 0)
+					{
                         cProcess = readyQueue.peek();
                         cPage = cProcess.grabPage();
 
@@ -165,20 +165,20 @@ public class ClockAlg
                         cProcess.decrementLifespan();
 
                         // process is finished computing
-                        if (cProcess.getLifespan() == 0) 
-                        {
+                        if (cProcess.getLifespan() == 0)
+						{
                             this.resultingList.add(cProcess);
                             cProcess.setTurnAround(cpuWatch);
                             this.readyQueue.poll();
                         }
                         // process still need work done
-                        else 
-                        {
+                        else
+						{
                             cProcess.decrementQuantum();
-                            
+
                             // quantum burst is over
-                            if (cProcess.getQuantum() == 0) 
-                            {
+                            if (cProcess.getQuantum() == 0)
+							{
                                 // send to back of ready queue
                                 cProcess.resetQuantum();
                                 readyQueue.add(readyQueue.poll());
@@ -192,12 +192,12 @@ public class ClockAlg
             cpuWatch++;
 
             // checking valid ready processes from the blocked queue
-            for (int i = 0; i < LRUList.size(); i++) 
-            {
-                if (bQueue.size() != 0) 
-                {
-                    if (bQueue.peek().canUnblock(cpuWatch) == true) 
-                    {
+            for (int i = 0; i < LRUList.size(); i++)
+			{
+                if (bQueue.size() != 0)
+				{
+                    if (bQueue.peek().canUnblock(cpuWatch) == true)
+					{
                         // process is ready
                         this.readyQueue.add(bQueue.poll());
                     }
@@ -205,23 +205,23 @@ public class ClockAlg
             }
 
         } 
-        while (this.LRUList.size() != this.resultingList.size());
+		while (this.LRUList.size() != this.resultingList.size());
     }
 
-    public void outputResults() 
-    {
+    public void outputResults()
+	{
         // print the data of the list of processes in order of ID
         Collections.sort(resultingList, new sortByProcessID());
-        for (final Process process : resultingList) 
-        {
+        for (final Process process : resultingList)
+		{
             final String strID = Integer.toString(process.getID());
             final String strProcessName = process.getFileName();
             final String strTurnAround = Integer.toString(process.getTurnAround());
             final String strFaults = Integer.toString(process.getNumFaults());
             final String strFaultList = process.generateFaultList();
 
-            System.out.printf(strID + "    " + strProcessName + "      " + strTurnAround + "              " + strFaults + "        " + strFaultList + "\n");
+            System.out.printf(strID + "    " + strProcessName + "      " + strTurnAround + "              " + strFaults + "       " + strFaultList + "\n");
         }
     }
-    
+
 }

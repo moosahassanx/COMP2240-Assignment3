@@ -11,10 +11,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-class mysimulator 
-{
-    public static void main(final String args[]) throws FileNotFoundException 
-    {
+class A3 {
+    public static void main(final String args[]) throws FileNotFoundException {
         // initialising some input fields from user
         int numFrames = 0;
         int quantumSize = 0;
@@ -22,40 +20,32 @@ class mysimulator
         int processId = 1;
 
         // getting data from user
-        for (int i = 0; i < args.length; i++) 
-        {
+        for (int i = 0; i < args.length; i++) {
             // first value will be number of frames
-            if (i == 0) 
-            {
+            if (i == 0) {
                 numFrames = Integer.parseInt(args[i]);
             }
             // second value will be quantum size
-            else if (i == 1) 
-            {
+            else if (i == 1) {
                 quantumSize = Integer.parseInt(args[i]);
             }
             // other arguments are text file names
-            else 
-            {
+            else {
                 // fetching data from file
                 final Scanner file = new Scanner(new File(args[i]));
                 final String fileName = args[i];
 
-                try 
-                {
+                try {
                     final ArrayList<Page> pages = new ArrayList<Page>();
                     String newText = "";
 
                     // reading the file
-                    while (file.hasNext()) 
-                    {
+                    while (file.hasNext()) {
                         newText = file.nextLine();
 
                         // file has more information
-                        if (!newText.equals("end")) 
-                        {
-                            if (!newText.equals("begin")) 
-                            {
+                        if (!newText.equals("end")) {
+                            if (!newText.equals("begin")) {
                                 // managing and assigning data
                                 final Page pageNum = new Page(Integer.parseInt(newText));
                                 pages.add(pageNum);
@@ -67,9 +57,7 @@ class mysimulator
                     final Process process = new Process(processId, fileName, pages, quantumSize);
                     pList.add(process);
                     processId++;
-                } 
-                catch (final Exception e) 
-                {
+                } catch (final Exception e) {
                     System.out.println("ERROR: " + e);
                 }
 
@@ -83,8 +71,7 @@ class mysimulator
 
         // allocated frames for each process
         final int dividedFrames = numFrames / pList.size();
-        for (final Process p : pList)
-        {
+        for (final Process p : pList) {
             p.setFrames(dividedFrames);
         }
 
@@ -103,9 +90,9 @@ class mysimulator
 
         System.out.println();
         System.out.println("------------------------------------------------------------ \n");
-        
+
         System.out.println("Clock - Fixed:");
-        System.out.println("PID  Process Name      Turnaround Time  # Faults  Fault Times");
+        System.out.println("PID  Process Name      Turnaround Time  #Faults  Fault Times");
         clockObj.outputResults();
     }
 }
